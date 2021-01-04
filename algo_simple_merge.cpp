@@ -8,7 +8,7 @@
 
 using namespace std;
 
-uint32_t simple_merge_based_intersection(const uint32_t* a, uint32_t a_len, const uint32_t* b, uint32_t b_len, uint32_t* c) {
+uint32_t simple_merge_intersection(const uint32_t* a, uint32_t a_len, const uint32_t* b, uint32_t b_len, uint32_t* c) {
 	uint32_t pos_c = 0;
 	uint32_t pos_a = 0;
 	uint32_t pos_b = 0;
@@ -31,7 +31,7 @@ uint32_t simple_merge_based_intersection(const uint32_t* a, uint32_t a_len, cons
 }
 
 
-uint32_t simple_merge_based_intersection2(const uint32_t* a, uint32_t a_len, uint32_t* b, uint32_t b_len, uint32_t* c) {
+uint32_t simple_merge_intersection2(const uint32_t* a, uint32_t a_len, uint32_t* b, uint32_t b_len, uint32_t* c) {
 	uint32_t pos_c = 0;
 	uint32_t pos_a = 0;
 	uint32_t pos_b = 0;

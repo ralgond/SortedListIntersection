@@ -64,16 +64,27 @@ int main(int argc, char* argv[]) {
 	time2 = currentTimeMs();
 	cout << "v3_avx2\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
 
+	time1 = currentTimeMs();
+	for (int i = 0; i < 10000; i++)
+		cnt = highlyscalable_SIMD_intersection(freq, freqLen, rare, rareLen, c);
+	time2 = currentTimeMs();
+	cout << "highlyscalable_SIMD\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
-		cnt = simple_merge_based_intersection(freq, freqLen, rare, rareLen, c);
+		cnt = lemire_highlyscalable_SIMD_intersection(freq, freqLen, rare, rareLen, c);
+	time2 = currentTimeMs();
+	cout << "lemire_highlyscalable_SIMD\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+
+	time1 = currentTimeMs();
+	for (int i = 0; i < 10000; i++)
+		cnt = simple_merge_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
 	cout << "simple_merge\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
-		cnt = block_merge_based_intersection(freq, freqLen, rare, rareLen, c);
+		cnt = block_merge_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
 	cout << "block_merge\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
 

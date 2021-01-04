@@ -9,7 +9,7 @@
 
 using namespace std;
 
-uint32_t block_merge_based_intersection(const uint32_t* a, uint32_t a_len, const uint32_t* b, uint32_t b_len, uint32_t* c) {
+uint32_t block_merge_intersection(const uint32_t* a, uint32_t a_len, const uint32_t* b, uint32_t b_len, uint32_t* c) {
 	uint32_t c_pos = 0;
 	uint32_t a_pos = 0;
 	uint32_t b_pos = 0;
