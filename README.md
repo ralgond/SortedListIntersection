@@ -16,7 +16,7 @@ v1_avx2	189ms	6
 v3_avx2	360ms	6
 highlyscalable_SIMD	153ms	6
 lemire_highlyscalable_SIMD	181ms	6
-scalar	149ms	6./main data/10w_1.txt data/10w_2.txt 
+scalar	149ms	6
 block_merge	626ms	6
 bisearch	3899ms	6
 bloom	3771ms	6
