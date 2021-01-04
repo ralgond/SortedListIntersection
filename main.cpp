@@ -56,13 +56,13 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < 10000; i++)
 		cnt = v1_avx2_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "v1\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "v1_avx2\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
 	
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = v3_avx2_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "v3\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "v3_avx2\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
 
 
 	time1 = currentTimeMs();
