@@ -1,5 +1,5 @@
 # SortedListIntersection
-搜集有序列表求交集算法
+有序列表求交集算法
 
 # 如何运行
 make
