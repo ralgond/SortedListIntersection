@@ -15,4 +15,4 @@ block_merge	454ms	6
 bisearch	4110ms	6
 bloom	3926ms	6
 ```
-可以看出v1算法在众算法中最快，而bloom过滤器慢得出乎意料。
+可以看出v1_avx2算法在众算法中最快，而bloom过滤器慢得出乎意料。
