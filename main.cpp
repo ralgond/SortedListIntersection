@@ -78,9 +78,9 @@ int main(int argc, char* argv[]) {
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
-		cnt = simple_merge_intersection(freq, freqLen, rare, rareLen, c);
+		cnt = scalar(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "simple_merge\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "scalar\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)

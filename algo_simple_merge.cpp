@@ -16,14 +16,14 @@ uint32_t simple_merge_intersection(const uint32_t* a, uint32_t a_len, const uint
 	while (pos_a < a_len && pos_b < b_len) {
 		int data_a = a[pos_a];
 		int data_b = b[pos_b];
-		if (data_a == data_b) {
-			c[pos_c++] = data_a;
+		if (data_a < data_b) {
 			pos_a++;
-			pos_b++;
 		} else if (data_a > data_b) {
 			pos_b++;
 		} else {
+			c[pos_c++] = data_a;
 			pos_a++;
+			pos_b++;
 		}
 	}
 
