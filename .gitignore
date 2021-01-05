@@ -1,5 +1,5 @@
 main
-./tmp
+tmp/
 
 # Prerequisites
 *.d
