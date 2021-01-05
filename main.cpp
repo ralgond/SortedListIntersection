@@ -12,6 +12,10 @@
 
 using namespace std;
 
+float qps(int N, long ms) {
+	return N*1.0/(ms*1.0/1000);
+}
+
 int main(int argc, char* argv[]) {
 
 	string file1 = argv[1];
@@ -52,53 +56,55 @@ int main(int argc, char* argv[]) {
 
 	long time1, time2;
 
+	int N = 10000;
+
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = v1_avx2_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "v1_avx2\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "v1_avx2\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 	
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = v3_avx2_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "v3_avx2\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "v3_avx2\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = highlyscalable_SIMD_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "highlyscalable_SIMD\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "highlyscalable_SIMD\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = lemire_highlyscalable_SIMD_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "lemire_highlyscalable_SIMD\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "lemire_highlyscalable_SIMD\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = scalar(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "scalar\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "scalar\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = block_merge_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "block_merge\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "block_merge\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = bisearch_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "bisearch\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "bisearch\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 	
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = bloomfilter_intersection(filter, freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
-	cout << "bloom\t" << (time2-time1) << "ms"<<"\t"<<cnt<<endl;
+	cout << "bloom\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 
 
 	return 0;
