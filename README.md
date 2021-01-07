@@ -18,6 +18,7 @@ highlyscalable_SIMD	156ms	64102.6	6
 lemire_highlyscalable_SIMD	161ms	62111.8	6
 scalar	122ms	81967.2	6
 block_merge	550ms	18181.8	6
+sttni	140ms	71428.6	6
 bisearch	4002ms	2498.75	6
 bloom	3931ms	2543.88	6
 ```
@@ -32,6 +33,7 @@ highlyscalable_SIMD	1880ms	5319.15	8944
 lemire_highlyscalable_SIMD	1814ms	5512.68	8944
 scalar	6806ms	1469.29	8944
 block_merge	4521ms	2211.9	8944
+sttni	2137ms	4679.46	8944
 ```
 可以看出[highlyscalable_SIMD](http://highlyscalable.wordpress.com/2012/06/05/fast-intersection-sorted-lists-sse/)算法在众算法中算是比较快的，不过它相对v1_avx2更复杂。
 
@@ -44,8 +46,9 @@ highlyscalable_SIMD	2016ms	4960.32	956
 lemire_highlyscalable_SIMD	1941ms	5151.98	956
 scalar	6728ms	1486.33	956
 block_merge	4580ms	2183.41	956
+sttni	1221ms	8190.01	956
 ```
-结合数据集2的结果可以看出，交集的大小对算法的性能影响很小。
+结合数据集2的结果可以看出，除了基于sttni的算法，交集的大小对其他算法的性能影响很小。
 
 ### 数据集4（数量为100w*100w，交集数为10096）
 ```
@@ -55,4 +58,6 @@ highlyscalable_SIMD	21281ms	469.903	10096
 lemire_highlyscalable_SIMD	20229ms	494.34	10096
 scalar	67708ms	147.693	10096
 block_merge	46231ms	216.305	10096
+sttni	13048ms	766.401	9789
 ```
+当数量级达到100w时，基于sttni加速的算法速度最快。
