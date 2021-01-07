@@ -58,6 +58,6 @@ highlyscalable_SIMD	21281ms	469.903	10096
 lemire_highlyscalable_SIMD	20229ms	494.34	10096
 scalar	67708ms	147.693	10096
 block_merge	46231ms	216.305	10096
-sttni	13048ms	766.401	9789
+sttni	13048ms	766.401	10096
 ```
 当数量级达到100w时，基于sttni加速的算法速度最快。
