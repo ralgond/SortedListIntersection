@@ -94,17 +94,27 @@ int main(int argc, char* argv[]) {
 	time2 = currentTimeMs();
 	cout << "block_merge\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 
-	time1 = currentTimeMs();
-	for (int i = 0; i < 10000; i++)
-		cnt = bisearch_intersection(freq, freqLen, rare, rareLen, c);
-	time2 = currentTimeMs();
-	cout << "bisearch\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
+//	time1 = currentTimeMs();
+//	for (int i = 0; i < 10000; i++)
+//		cnt = bisearch_intersection(freq, freqLen, rare, rareLen, c);
+//	time2 = currentTimeMs();
+//	cout << "bisearch\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 	
+//	time1 = currentTimeMs();
+//	for (int i = 0; i < 10000; i++)
+//		cnt = bloomfilter_intersection(filter, freq, freqLen, rare, rareLen, c);
+//	time2 = currentTimeMs();
+//	cout << "bloom\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
+
+	prepare_shuffling_dict16();
+	PrefixList* rarePl = buildPrefixList(rare, rareLen);
+	PrefixList* freqPl = buildPrefixList(freq, freqLen);
+
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
-		cnt = bloomfilter_intersection(filter, freq, freqLen, rare, rareLen, c);
+		cnt = intersectPrefixList(freqPl, rarePl, c);
 	time2 = currentTimeMs();
-	cout << "bloom\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
+	cout << "sttni\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 
 
 	return 0;

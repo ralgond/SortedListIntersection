@@ -29,5 +29,33 @@ size_t lemire_highlyscalable_SIMD_intersection(const uint32_t *A, const size_t s
                                             uint32_t *out);
 
 
+////////////////////////////////////////////////////////////////////////////////////
+class PrefixNode {
+public:
+        PrefixNode* next;
+        uint32_t offset;
+        uint16_t cnt;
+        uint16_t prefix;
 
+        PrefixNode(PrefixNode* next, uint32_t offset, uint16_t cnt, uint16_t prefix) {
+                this->next = next;
+                this->offset = offset;
+                this->cnt = cnt;
+                this->prefix = prefix;
+        }
+};
 
+class PrefixList {
+public:
+        PrefixNode* head;
+        uint32_t* data;
+        uint32_t data_len;
+};
+
+PrefixList* buildPrefixList(uint32_t* a, uint32_t a_len);
+
+uint32_t intersectPrefixList(PrefixList* a, PrefixList* b, uint32_t* c);
+
+void prepare_shuffling_dict16();
+
+///////////////////////////////////////////////////////////////////////////////////

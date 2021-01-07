@@ -1,5 +1,7 @@
 main
+core
 tmp/
+
 
 # Prerequisites
 *.d
