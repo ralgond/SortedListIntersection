@@ -6,6 +6,7 @@
 #include <emmintrin.h>
 
 #include "algo_intersection.h"
+#include "sorted_int_file_reader.h"
 
 using namespace std;
 
@@ -53,110 +54,51 @@ void dumpPrefixList(PrefixList* pl) {
 	}
 }
 
-uint32_t intersect(uint32_t * a, uint32_t a_len, uint32_t * b, uint32_t b_len, uint32_t* c, uint16_t high16);
-
-uint32_t intersectPrefixList(PrefixList* a, PrefixList* b, uint32_t* c) {
-	uint32_t c_pos = 0;
-	PrefixNode* an = a->head;
-	PrefixNode* bn = b->head;
-
-	while (an != NULL && bn != NULL) {
-		if (an->prefix == bn->prefix) {
-			c_pos += intersect(a->data + an->offset, an->cnt, b->data + bn->offset, bn->cnt, c + c_pos, an->prefix);
-			an = an->next;
-			bn = bn->next;
-		} else if (an->prefix < bn->prefix) {
-			an = an->next;
-		} else {
-			bn = bn->next;
+void dumpPrefixList2(PrefixList* pl) {
+	PrefixNode* n = pl->head;
+        while (n != NULL) {
+		for (int i = n->offset; i < n->offset+n->cnt; i++) {
+			cout<<pl->data[i]<<endl;
 		}
-	}
-	return c_pos;
-}
-
-int main2() {
-	uint32_t a[] = {
-		0xFED01001,
-		0xFED20001,
-		0xFED20002,
-		0xFED30001,
-		0xFED30002,
-		0xFED30003,
-	};
-
-	uint32_t a_len = sizeof(a)/sizeof(a[0]);
-
-
-	PrefixList* a_pl = buildPrefixList(a, a_len);
-	dumpPrefixList(a_pl);
-
-
-	
-	uint32_t b[] = {
-		0xFED01001,
-	//	0xFED20001,
-	//	0xFED20002,
-		0xFED30001,
-	//	0xFED30002,
-		0xFED30003,
-	};
-
-	uint32_t b_len = sizeof(b)/sizeof(b[0]);
-
-
-	PrefixList* b_pl = buildPrefixList(b, b_len);
-	dumpPrefixList(b_pl);
-
-
-	uint32_t * c = new uint32_t[a_len];
-	uint32_t c_cnt = intersectPrefixList(a_pl, b_pl, c);
-
-	cout<<c_cnt<<endl;
-	for (int i = 0; i < c_cnt; i++) {
-		cout<<hex<<c[i]<<endl;
-	}
-	return 0;
-}
-
-int getBit(int value, int position) {
-	return ((value & (1<<position)) >> position);
+                n = n->next;
+        }
 }
 
 static __m128i* shuffle_mask16 = new __m128i[256];
 
-void prepare_shuffling_dict16() {
-	for (int i = 0; i  < 256; i++) {
-		int counter = 0;
-		char permutation[16];
-		memset(permutation, 0xFF, sizeof(permutation));
-		for (char b = 0; b < 8; b++) {
-			if (getBit(i, b)) {
-				permutation[counter++] = 2*b;
-				permutation[counter++] = 2*b + 1;
-			}
-		}
-		__m128i mask = _mm_loadu_si128((const __m128i*)permutation);
-		shuffle_mask16[i] = mask;
-	}
-}
-
 inline uint32_t intersect_vector16(uint16_t* A, uint16_t* B, uint16_t* C) {
 	uint32_t count = 0;
-
 
 	__m128i a_v = _mm_loadu_si128((__m128i*)&A[0]);
 	__m128i b_v = _mm_loadu_si128((__m128i*)&B[0]);
 
-	//__m128i res_v = _mm_cmpestrm(b_v, 8, a_v, 8, _SIDD_UWORD_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_BIT_MASK);
-	__m128i res_v = _mm_cmpistrm(b_v, a_v,  _SIDD_UWORD_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_BIT_MASK);
+	__m128i res_v = _mm_cmpestrm(b_v, 8, a_v, 8, _SIDD_UWORD_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_BIT_MASK);
+	//__m128i res_v = _mm_cmpistrm(b_v, a_v,  _SIDD_UWORD_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_BIT_MASK);
 	int r = _mm_extract_epi32(res_v, 0);
 	//cout<<"r="<<r<<endl;
 	__m128i p = _mm_shuffle_epi8(a_v, shuffle_mask16[r]);
 	_mm_storeu_si128((__m128i*)&C[count], p);
 	count += _mm_popcnt_u32(r);
 
-
 	return count;
+}
+
+uint32_t intersect2(uint32_t * a, uint32_t a_len, uint32_t * b, uint32_t b_len, uint32_t* c, uint16_t high16) {
+	uint32_t* c_begin = c;
+	uint32_t ai = 0;
+	uint32_t bi = 0;
+
+	while (ai < a_len && bi < b_len) {
+		if (a[ai] < b[bi]) {
+			ai++;
+		} else if (a[ai] > b[bi]) {
+			bi++;
+		} else {
+			*c = a[ai];
+			c++; ai++; bi++;
+		}
+	}
+	return c - c_begin;
 }
 
 uint32_t intersect(uint32_t * a, uint32_t a_len, uint32_t * b, uint32_t b_len, uint32_t* c, uint16_t high16) {
@@ -217,6 +159,48 @@ uint32_t intersect(uint32_t * a, uint32_t a_len, uint32_t * b, uint32_t b_len, u
 	return c - c_begin;
 }
 
+uint32_t intersectPrefixList(PrefixList* a, PrefixList* b, uint32_t* c) {
+	uint32_t c_pos = 0;
+	PrefixNode* an = a->head;
+	PrefixNode* bn = b->head;
+
+	while (an != NULL && bn != NULL) {
+		if (an->prefix == bn->prefix) {
+			c_pos += intersect(a->data + an->offset, an->cnt, b->data + bn->offset, bn->cnt, c + c_pos, an->prefix);
+			an = an->next;
+			bn = bn->next;
+		} else if (an->prefix < bn->prefix) {
+			an = an->next;
+		} else {
+			bn = bn->next;
+		}
+	}
+	return c_pos;
+}
+
+
+int getBit(int value, int position) {
+	return ((value & (1<<position)) >> position);
+}
+
+
+void prepare_shuffling_dict16() {
+	for (int i = 0; i  < 256; i++) {
+		int counter = 0;
+		char permutation[16];
+		memset(permutation, 0xFF, sizeof(permutation));
+		for (char b = 0; b < 8; b++) {
+			if (getBit(i, b)) {
+				permutation[counter++] = 2*b;
+				permutation[counter++] = 2*b + 1;
+			}
+		}
+		__m128i mask = _mm_loadu_si128((const __m128i*)permutation);
+		shuffle_mask16[i] = mask;
+	}
+}
+
+
 int main3() {
 	prepare_shuffling_dict16();
 
@@ -230,3 +214,86 @@ int main3() {
 	}
 	return 0;
 }
+
+int main2() {
+	uint32_t a[] = {
+		0xFED01001,
+		0xFED20001,
+		0xFED20002,
+		0xFED30001,
+		0xFED30002,
+		0xFED30003,
+	};
+
+	uint32_t a_len = sizeof(a)/sizeof(a[0]);
+
+
+	PrefixList* a_pl = buildPrefixList(a, a_len);
+	dumpPrefixList(a_pl);
+
+
+	
+	uint32_t b[] = {
+		0xFED01001,
+	//	0xFED20001,
+	//	0xFED20002,
+		0xFED30001,
+	//	0xFED30002,
+		0xFED30003,
+	};
+
+	uint32_t b_len = sizeof(b)/sizeof(b[0]);
+
+
+	PrefixList* b_pl = buildPrefixList(b, b_len);
+	dumpPrefixList(b_pl);
+
+
+	uint32_t * c = new uint32_t[a_len];
+	uint32_t c_cnt = intersectPrefixList(a_pl, b_pl, c);
+
+	cout<<c_cnt<<endl;
+	for (int i = 0; i < c_cnt; i++) {
+		cout<<hex<<c[i]<<endl;
+	}
+	return 0;
+}
+
+int main4(int argc, char* argv[]) {
+        string file1 = argv[1];
+
+        uint32_t a_len = 0;
+        uint32_t* a = read_sorted_int_from_file(file1, &a_len);
+
+        PrefixList* pl = buildPrefixList(a, a_len);
+
+	dumpPrefixList2(pl);
+
+	return 0;
+}
+
+
+int main5() {
+        prepare_shuffling_dict16();
+
+        uint32_t _A[8] = { 16449536, 16449580, 16449914, 16450040, 16450068, 16450264, 16450296, 16450304};
+	uint16_t A[8] = {0};
+	for (int i = 0; i < 8; i++) {
+		A[i] = _low16(_A[i]);
+	}
+
+	uint32_t _B[8] = {16449622, 16449724, 16449807, 16449856, 16449861, 16450264, 16450500, 16450581};
+        uint16_t B[8] = {0};
+	for (int i = 0; i < 8; i++) {
+		B[i] = _low16(_B[i]);
+	}
+
+        uint16_t* C = new uint16_t[8];
+        uint32_t count = intersect_vector16(A, B, C);
+        cout<<"count="<<count<<endl;
+        for (int i = 0; i < count; i++) {
+                cout<<C[i]<<endl;
+        }
+        return 0;
+}
+

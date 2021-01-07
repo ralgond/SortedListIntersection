@@ -58,12 +58,13 @@ int main(int argc, char* argv[]) {
 
 	int N = 10000;
 
+
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = v1_avx2_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
 	cout << "v1_avx2\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
-	
+
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
 		cnt = v3_avx2_intersection(freq, freqLen, rare, rareLen, c);
@@ -105,7 +106,7 @@ int main(int argc, char* argv[]) {
 //		cnt = bloomfilter_intersection(filter, freq, freqLen, rare, rareLen, c);
 //	time2 = currentTimeMs();
 //	cout << "bloom\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
-
+label1:
 	prepare_shuffling_dict16();
 	PrefixList* rarePl = buildPrefixList(rare, rareLen);
 	PrefixList* freqPl = buildPrefixList(freq, freqLen);
@@ -116,8 +117,9 @@ int main(int argc, char* argv[]) {
 	time2 = currentTimeMs();
 	cout << "sttni\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
 
+	//for (uint32_t i = 0; i < cnt; i++) {
+	//	cout<<c[i]<<endl;
+	//}
 
 	return 0;
 }
-
-
