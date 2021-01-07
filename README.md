@@ -50,14 +50,14 @@ sttni	1221ms	8190.01	956
 ```
 结合数据集2的结果可以看出，除了基于sttni的算法，交集的大小对其他算法的性能影响很小。
 
-### 数据集4（数量为100w*100w，交集数为10096）
+### 数据集4（数量为100w*100w，交集数为9792）
 ```
-v1_avx2	21127ms	473.328	10096
-v3_avx2	25731ms	388.636	10096
-highlyscalable_SIMD	21281ms	469.903	10096
-lemire_highlyscalable_SIMD	20229ms	494.34	10096
-scalar	67708ms	147.693	10096
-block_merge	46231ms	216.305	10096
-sttni	13048ms	766.401	10096
+v1_avx2	20067ms	498.331	9792
+v3_avx2	29189ms	342.595	9792
+highlyscalable_SIMD	19818ms	504.592	9792
+lemire_highlyscalable_SIMD	21090ms	474.158	9792
+scalar	75904ms	131.745	9792
+block_merge	52031ms	192.193	9792
+sttni	15090ms	662.691	9792
 ```
 当数量级达到100w时，基于sttni加速的算法速度最快。
