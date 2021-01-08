@@ -73,32 +73,13 @@ inline uint32_t intersect_vector16(uint16_t* A, uint16_t* B, uint16_t* C) {
 	__m128i b_v = _mm_loadu_si128((__m128i*)&B[0]);
 
 	__m128i res_v = _mm_cmpestrm(b_v, 8, a_v, 8, _SIDD_UWORD_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_BIT_MASK);
-	//__m128i res_v = _mm_cmpistrm(b_v, a_v,  _SIDD_UWORD_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_BIT_MASK);
+	//__m128i res_v = _mm_cmpistrm(b_v, a_v, _SIDD_UWORD_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_BIT_MASK);
 	int r = _mm_extract_epi32(res_v, 0);
-	//cout<<"r="<<r<<endl;
 	__m128i p = _mm_shuffle_epi8(a_v, shuffle_mask16[r]);
 	_mm_storeu_si128((__m128i*)&C[count], p);
 	count += _mm_popcnt_u32(r);
 
 	return count;
-}
-
-uint32_t intersect2(uint32_t * a, uint32_t a_len, uint32_t * b, uint32_t b_len, uint32_t* c, uint16_t high16) {
-	uint32_t* c_begin = c;
-	uint32_t ai = 0;
-	uint32_t bi = 0;
-
-	while (ai < a_len && bi < b_len) {
-		if (a[ai] < b[bi]) {
-			ai++;
-		} else if (a[ai] > b[bi]) {
-			bi++;
-		} else {
-			*c = a[ai];
-			c++; ai++; bi++;
-		}
-	}
-	return c - c_begin;
 }
 
 uint32_t intersect(uint32_t * a, uint32_t a_len, uint32_t * b, uint32_t b_len, uint32_t* c, uint16_t high16) {
@@ -276,7 +257,7 @@ int main4(int argc, char* argv[]) {
 int main5() {
         prepare_shuffling_dict16();
 
-        uint32_t _A[8] = { 16449536, 16449580, 16449914, 16450040, 16450068, 16450264, 16450296, 16450304};
+        uint32_t _A[8] = {16449536, 16449580, 16449914, 16450040, 16450068, 16450264, 16450296, 16450304};
 	uint16_t A[8] = {0};
 	for (int i = 0; i < 8; i++) {
 		A[i] = _low16(_A[i]);
