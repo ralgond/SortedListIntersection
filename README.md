@@ -2,6 +2,8 @@
 有序列表求交集算法
 
 # 如何运行
+首先要确保你的CPU在指令集方面支持AVX2和SSE4.2的STTNI
+
 make
 
 ./main data/docid_list_s.txt data/docid_list_c.txt
