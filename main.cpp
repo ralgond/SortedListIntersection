@@ -76,6 +76,14 @@ int main(int argc, char* argv[]) {
 		cnt = highlyscalable_SIMD_intersection(freq, freqLen, rare, rareLen, c);
 	time2 = currentTimeMs();
 	cout << "highlyscalable_SIMD\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
+	
+	prepare_shuffling_dict32();
+	time1 = currentTimeMs();
+	for (int i = 0; i < 10000; i++)
+		cnt = highlyscalable_avx2_intersection(freq, freqLen, rare, rareLen, c);
+	time2 = currentTimeMs();
+	cout << "highlyscalable_avx2\t" << (time2-time1) << "ms"<<"\t"<<qps(N, (time2-time1))<<"\t"<<cnt<<endl;
+
 
 	time1 = currentTimeMs();
 	for (int i = 0; i < 10000; i++)
