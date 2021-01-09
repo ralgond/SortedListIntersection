@@ -12,13 +12,14 @@ make
 
 结果有4列，第一列是算法名，第二列是花费时间，第三列是QPS，第四列是交集大小。比如下面：
 ```
-v1_avx2	198ms	50505.1	6
-v3_avx2	415ms	24096.4	6
-highlyscalable_SIMD	154ms	64935.1	6
-lemire_highlyscalable_SIMD	182ms	54945.1	6
-scalar	149ms	67114.1	6
-block_merge	636ms	15723.3	6
-sttni	167ms	59880.2	6
+v1_avx2	189ms	52910.1	6
+v3_avx2	414ms	24154.6	6
+highlyscalable_SIMD	155ms	64516.1	6
+highlyscalable_avx2	160ms	62500	6
+lemire_highlyscalable_SIMD	160ms	62500	6
+scalar	152ms	65789.5	6
+block_merge	571ms	17513.1	6
+sttni	168ms	59523.8	6
 bisearch	4002ms	2498.75	6
 bloom	3931ms	2543.88	6
 ```
@@ -27,42 +28,43 @@ bloom	3931ms	2543.88	6
 ### 数据集2（数量为10w*10w，交集数为8944）
 ./main data/10w_1.txt data/10w_2.txt 
 ```
-v1_avx2	1891ms	5288.21	8944
-v3_avx2	3528ms	2834.47	8944
-highlyscalable_SIMD	1784ms	5605.38	8944
-lemire_highlyscalable_SIMD	1908ms	5241.09	8944
-scalar	7725ms	1294.5	8944
-block_merge	5111ms	1956.56	8944
-sttni	2309ms	4330.88	8944
+v1_avx2	1884ms	5307.86	8944
+v3_avx2	3472ms	2880.18	8944
+highlyscalable_SIMD	1942ms	5149.33	8944
+highlyscalable_avx2	1081ms	9250.69	8944
+lemire_highlyscalable_SIMD	1751ms	5711.02	8944
+scalar	7591ms	1317.35	8944
+block_merge	4821ms	2074.26	8944
+sttni	2198ms	4549.59	8944
 ```
-可以看出[highlyscalable_SIMD](http://highlyscalable.wordpress.com/2012/06/05/fast-intersection-sorted-lists-sse/)算法在众算法中算是比较快的，不过它相对v1_avx2更复杂。
+可以看出highlyscalable_avx2最快，它是[highlyscalable_SIMD](http://highlyscalable.wordpress.com/2012/06/05/fast-intersection-sorted-lists-sse/)算法的升级版。
 
 ### 数据集3（数量为10w*10w，交集数为956）
 ./main data/10w_3.txt data/10w_4.txt
 ```
 v1_avx2	1951ms	5125.58	956
-v3_avx2	2895ms	3454.23	956
-highlyscalable_SIMD	1944ms	5144.03	956
-lemire_highlyscalable_SIMD	2083ms	4800.77	956
-scalar	7497ms	1333.87	956
-block_merge	5151ms	1941.37	956
-sttni	1416ms	7062.15	956
+v3_avx2	2829ms	3534.82	956
+highlyscalable_SIMD	2086ms	4793.86	956
+highlyscalable_avx2	1185ms	8438.82	956
+lemire_highlyscalable_SIMD	1867ms	5356.19	956
+scalar	7523ms	1329.26	956
+block_merge	4859ms	2058.04	956
+sttni	1355ms	7380.07	956
 ```
 结合数据集2的结果可以看出，除了基于sttni的算法，交集的大小对其他算法的性能影响很小。而对于基于sttni的算法，交集越小速度越快。
 
 ### 数据集4（数量为100w*100w，交集数为9792）
 ```
-v1_avx2	20067ms	498.331	9792
-v3_avx2	29189ms	342.595	9792
-highlyscalable_SIMD	19818ms	504.592	9792
-lemire_highlyscalable_SIMD	21090ms	474.158	9792
-scalar	75904ms	131.745	9792
-block_merge	52031ms	192.193	9792
-sttni	15090ms	662.691	9792
+v1_avx2	19932ms	501.706	9792
+v3_avx2	28788ms	347.367	9792
+highlyscalable_SIMD	21565ms	463.714	9792
+highlyscalable_avx2	12725ms	785.855	9792
+lemire_highlyscalable_SIMD	19159ms	521.948	9792
+scalar	75863ms	131.817	9792
+block_merge	50742ms	197.075	9792
+sttni	15344ms	651.721	9792
 ```
-当数量级达到100w时，基于sttni加速的算法速度最快。
+当数量级达到100w时，highlyscalable_avx2算法速度依然是最快的。
 
 ### 结论
-[基于STTNI的算法](http://www.adms-conf.org/p1-SCHLEGEL.pdf)虽然不是最快的，但是它在各种情况中的速度都名列前茅，不过STTNI是需要SSE4.2，导致它的可移植性比较差，另外这个算法还需要额外的内存空间。
-
-v1_avx2是最简单最好理解的，无需额外内存空间，在各种情况也是名列前茅，它很容易就能升级到AVX512指令集，我比较推荐使用这个算法。
+推荐使用highlyscalable_avx2算法，它简单而快速。
