@@ -1,3 +1,6 @@
+#ifndef _ALGO_INTERSECTION_H_
+#define _ALGO_INTERSECTION_H_
+
 
 #include <stdint.h>
 
@@ -64,3 +67,5 @@ uint32_t intersectPrefixList(PrefixList* a, PrefixList* b, uint32_t* c);
 void prepare_shuffling_dict16();
 
 ///////////////////////////////////////////////////////////////////////////////////
+
+#endif
