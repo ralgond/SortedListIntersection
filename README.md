@@ -2,7 +2,7 @@
 有序列表求交集算法
 
 # 如何运行
-首先要确保你的CPU在指令集方面支持AVX2和SSE4.2的STTNI
+首先要确保你的CPU在指令集方面支持AVX2, AVX512F和SSE4.2的STTNI
 
 make
 
