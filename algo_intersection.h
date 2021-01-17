@@ -32,6 +32,12 @@ size_t highlyscalable_avx2_intersection(const uint32_t *A, const size_t s_a,
                                      const uint32_t *B, const size_t s_b,
                                      uint32_t *out);
 
+void prepare_shuffling_dict64();
+size_t highlyscalable_avx512_intersection(const uint32_t *A, const size_t s_a,
+                                     const uint32_t *B, const size_t s_b,
+                                     uint32_t *out);
+
+
 size_t lemire_highlyscalable_SIMD_intersection(const uint32_t *A, const size_t s_a,
                                             const uint32_t *B, const size_t s_b,
                                             uint32_t *out);
