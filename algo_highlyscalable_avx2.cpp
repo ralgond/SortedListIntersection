@@ -87,37 +87,13 @@ size_t highlyscalable_avx2_intersection(const uint32_t *A, const size_t s_a,
 
     //[ compute mask of common elements
     const __m256i rotate_arg = _mm256_set_epi32(0,7,6,5,4,3,2,1);
-    __m256i cmp_mask1 = _mm256_cmpeq_epi32(v_a, v_b); // pairwise comparison
+    __m256i cmp_mask = _mm256_cmpeq_epi32(v_a, v_b); // pairwise comparison
 
-    v_b = _mm256_permutevar8x32_epi32(v_b, rotate_arg);    // shuffling
-    __m256i cmp_mask2 = _mm256_cmpeq_epi32(v_a, v_b); // again...
-    
-    v_b = _mm256_permutevar8x32_epi32(v_b, rotate_arg);
-    __m256i cmp_mask3 = _mm256_cmpeq_epi32(v_a, v_b); // and again...
-    
-    v_b = _mm256_permutevar8x32_epi32(v_b, rotate_arg);
-    __m256i cmp_mask4 = _mm256_cmpeq_epi32(v_a, v_b); // and again.
-
-    v_b = _mm256_permutevar8x32_epi32(v_b, rotate_arg);
-    __m256i cmp_mask5 = _mm256_cmpeq_epi32(v_a, v_b); // and again.
-
-    v_b = _mm256_permutevar8x32_epi32(v_b, rotate_arg);
-    __m256i cmp_mask6 = _mm256_cmpeq_epi32(v_a, v_b); // and again.
-    
-    v_b = _mm256_permutevar8x32_epi32(v_b, rotate_arg);
-    __m256i cmp_mask7 = _mm256_cmpeq_epi32(v_a, v_b); // and again.
-
-    v_b = _mm256_permutevar8x32_epi32(v_b, rotate_arg);
-    __m256i cmp_mask8 = _mm256_cmpeq_epi32(v_a, v_b); // and again.
-    
-    __m256i cmp_mask_1_4 = _mm256_or_si256(
-        _mm256_or_si256(cmp_mask1, cmp_mask2),
-        _mm256_or_si256(cmp_mask3, cmp_mask4)); // OR-ing of comparison masks
-    __m256i cmp_mask_5_8 = _mm256_or_si256(
-        _mm256_or_si256(cmp_mask5, cmp_mask6),
-        _mm256_or_si256(cmp_mask7, cmp_mask8)); // OR-ing of comparison masks
-
-    __m256i cmp_mask = _mm256_or_si256(cmp_mask_1_4, cmp_mask_5_8);
+    for (int i = 0; i < 7; i++) {
+	    v_b = _mm256_permutevar8x32_epi32(v_b, rotate_arg);    // shuffling
+	    __m256i cmp_mask1 = _mm256_cmpeq_epi32(v_a, v_b); // again...
+	    cmp_mask = _mm256_or_si256(cmp_mask, cmp_mask1);
+    }
 
     // convert the 256-bit mask to the 8-bit mask
     const int mask = _mm256_movemask_ps(_mm256_castsi256_ps(cmp_mask));
