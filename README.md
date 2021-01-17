@@ -76,4 +76,5 @@ sttni   16300ms 613.497 9792
 当数量级达到100w时，highlyscalable_avx2算法速度依然是最快的。
 
 ### 结论
-推荐使用highlyscalable_avx2算法，它简单、不依赖额外内存空间且速度最快。
+1. 推荐使用highlyscalable_avx2算法，它简单、不依赖额外内存空间且速度最快。
+2. 使用和highlyscalable_avx2相同思路，用AVX512实现的算法highlyscalable_avx512的速度并不比highlyscalable_avx2快，反而是更慢了。
